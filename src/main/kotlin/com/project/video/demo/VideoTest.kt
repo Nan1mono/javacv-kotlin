@@ -40,7 +40,7 @@ class VideoTest : Application() {
         // 初始化视频采集器
         grabber = Init.initOpenCVFrameGrabber()
         // 初始化音频解码器
-        val format = AudioFormat(192000F, 16, 1, true, false)
+        val format = AudioFormat(44100F, 16, 1, true, false)
         audioLine = Init.initAudioRecorder(format)
         // 初始化FFmpeg视频解码器
         recorder = Init.initFfmpegRecord(grabber)
@@ -91,7 +91,36 @@ class VideoTest : Application() {
                 val sleepTime = (33 - elapsed).coerceAtLeast(0) // 动态调整睡眠时间
                 Thread.sleep(sleepTime)
             }
-            cleanup()
+        }
+
+        thread {
+            val audioBytes = ByteArray(4096) // 增大缓冲区
+            while (isRunning) {
+                val startTime = System.currentTimeMillis()
+                var nBytesRead = audioLine.read(audioBytes, 0, audioBytes.size)
+                if (nBytesRead % 2 != 0) {
+                    nBytesRead-- // 确保字节数是 2 的倍数
+                }
+                if (nBytesRead > 0) {
+                    val nSamplesRead = nBytesRead / 2
+                    val samples = ShortArray(nSamplesRead)
+                    ByteBuffer.wrap(audioBytes, 0, nBytesRead)
+                        .order(ByteOrder.LITTLE_ENDIAN)
+                        .asShortBuffer()
+                        .get(samples)
+
+                    val sBuff = ShortBuffer.wrap(samples)
+                    try {
+                        recorder.recordSamples(44100, 1, sBuff) // 录制音频
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                        println("Audio Record failed: ${e.message}")
+                    }
+                }
+                val elapsed = System.currentTimeMillis() - startTime
+                val sleepTime = (33 - elapsed).coerceAtLeast(0) // 与视频同步，30 FPS
+                Thread.sleep(sleepTime)
+            }
         }
     }
 
@@ -99,7 +128,9 @@ class VideoTest : Application() {
     /**
      * 释放资源
      */
+    @Synchronized
     private fun cleanup() {
+        if (!isRunning) return // 避免重复清理
         recorder.stop()
         recorder.release()
         audioLine.stop()
