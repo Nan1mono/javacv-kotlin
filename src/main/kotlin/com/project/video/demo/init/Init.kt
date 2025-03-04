@@ -18,6 +18,7 @@ import javax.sound.sampled.TargetDataLine
 class Init {
 
     companion object {
+
         fun initOpenCVFrameGrabber(): OpenCVFrameGrabber {
             val grabber = OpenCVFrameGrabber(0)
             // 设置采集器大小
@@ -39,14 +40,6 @@ class Init {
             recorder.frameRate = 30.0
             // 设置画面质量（质量越小越高），默认为23
             recorder.videoQuality = 23.0
-
-            // 设置音频格式为OPUS
-            recorder.audioCodec = AV_CODEC_ID_AAC
-            recorder.audioChannels = 1
-            recorder.audioBitrate = 192000 // Opus 推荐比特率
-            recorder.sampleRate = 44100 // 与音频采集一致
-
-
             recorder.start()
             return recorder
         }
@@ -61,18 +54,6 @@ class Init {
             stage.show()
         }
 
-        fun initAudioRecorder(format: AudioFormat): TargetDataLine {
-            // 设置音频格式：44.1kHz, 16-bit, 单声道
-            // 创建音频数据线对象
-            val info = Info(TargetDataLine::class.java, format)
-            // 从音频输入对象中获取相应的音频数据
-            val audioLine = AudioSystem.getLine(info) as TargetDataLine
-            // 数据转码
-            audioLine.open(format)
-            // 开启服务
-            audioLine.start()
-            return audioLine
-        }
     }
 
 }
