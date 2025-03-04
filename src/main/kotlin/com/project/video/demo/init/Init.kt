@@ -19,6 +19,11 @@ class Init {
 
     companion object {
 
+        const val audioChannels = 2
+
+        const val sampleRate = 48000
+
+
         fun initOpenCVFrameGrabber(): OpenCVFrameGrabber {
             val grabber = OpenCVFrameGrabber(0)
             // 设置采集器大小
@@ -40,6 +45,10 @@ class Init {
             recorder.frameRate = 30.0
             // 设置画面质量（质量越小越高），默认为23
             recorder.videoQuality = 23.0
+            // 添加音频参数
+            recorder.audioChannels = audioChannels
+            recorder.sampleRate = sampleRate // 采样率 44.1kHz
+            recorder.audioCodec = AV_CODEC_ID_AAC // 使用 AAC 编码
             recorder.start()
             return recorder
         }
@@ -52,6 +61,15 @@ class Init {
             stage.scene = scene
             // 显示窗口
             stage.show()
+        }
+
+        fun initAudioLine(): TargetDataLine {
+            val format = AudioFormat(sampleRate.toFloat(), 16, audioChannels, true, false)
+            val info = Info(TargetDataLine::class.java, format)
+            val line = AudioSystem.getLine(info) as TargetDataLine
+            line.open(format)
+            line.start()
+            return line
         }
 
     }

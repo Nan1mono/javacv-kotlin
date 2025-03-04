@@ -1,5 +1,6 @@
 package com.project.video.demo.core
 
+import com.project.video.demo.init.Init
 import javafx.application.Platform
 import javafx.embed.swing.SwingFXUtils
 import javafx.scene.image.ImageView
@@ -8,12 +9,20 @@ import org.bytedeco.javacv.Java2DFrameConverter
 import org.bytedeco.javacv.OpenCVFrameConverter
 import org.bytedeco.javacv.OpenCVFrameGrabber
 import org.bytedeco.opencv.global.opencv_core
+import java.nio.ByteBuffer
+import javax.sound.sampled.TargetDataLine
 
 class VideoCatch {
 
     companion object {
-        fun catch(grabber: OpenCVFrameGrabber,frameConverter: OpenCVFrameConverter.ToMat,converter: Java2DFrameConverter,
-                  imageView: ImageView,recorder: FFmpegFrameRecorder){
+        fun catch(
+            grabber: OpenCVFrameGrabber,
+            frameConverter: OpenCVFrameConverter.ToMat,
+            converter: Java2DFrameConverter,
+            imageView: ImageView,
+            recorder: FFmpegFrameRecorder,
+            audioLine: TargetDataLine
+        ) {
             val startTime = System.currentTimeMillis()
             try {
                 val grab = grabber.grab()
@@ -35,6 +44,16 @@ class VideoCatch {
                     e.printStackTrace()
                     println("Record failed: ${e.message}")
                 }
+
+                // 音频采集
+                val buffer = ByteArray(4096)
+                val bytesRead = audioLine.read(buffer, 0, buffer.size)
+                if (bytesRead > 0) {
+                    val shortBuffer = ByteBuffer.wrap(buffer, 0, bytesRead / 2).asShortBuffer()
+                    recorder.recordSamples(Init.sampleRate, Init.audioChannels, shortBuffer) // 直接录制音频样本
+                }
+
+
                 // 释放反转帧
                 flippedFrame.close()
                 // 释放原始视频帧
@@ -49,7 +68,6 @@ class VideoCatch {
             Thread.sleep(sleepTime)
         }
     }
-
 
 
 }
