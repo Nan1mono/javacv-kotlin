@@ -1,17 +1,12 @@
 package com.project.video.demo
 
 import com.project.video.demo.core.VideoCatch
-import com.project.video.demo.init.Init
+import com.project.video.demo.init.VideoInit
 import javafx.application.Application
 import javafx.application.Platform
 import javafx.scene.image.ImageView
 import javafx.stage.Stage
 import org.bytedeco.javacv.*
-import java.nio.Buffer
-import java.nio.ByteBuffer
-import javax.sound.sampled.AudioSystem
-import javax.sound.sampled.DataLine
-import javax.sound.sampled.TargetDataLine
 import kotlin.concurrent.thread
 
 class VideoTest : Application() {
@@ -35,10 +30,10 @@ class VideoTest : Application() {
 
     override fun start(stage: Stage) {
         // 初始化视频采集器
-        grabber = Init.initOpenCVFrameGrabber()
-        recorder = Init.initFfmpegRecord(grabber)
+        grabber = VideoInit.initOpenCVFrameGrabber()
+        recorder = VideoInit.initFfmpegRecord(grabber)
         // 创建 JavaFX 窗口
-        Init.initFxSwing(imageView, stage)
+        VideoInit.initFxSwing(imageView, stage)
         // 窗口关闭时停止采集
         stage.setOnCloseRequest {
             isRunning = false

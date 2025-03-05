@@ -1,29 +1,16 @@
 package com.project.video.demo.init
 
-import javafx.application.Platform
 import javafx.scene.Scene
 import javafx.scene.image.ImageView
 import javafx.scene.layout.StackPane
 import javafx.stage.Stage
 import org.bytedeco.ffmpeg.global.avcodec.*
 import org.bytedeco.javacv.FFmpegFrameRecorder
-import org.bytedeco.javacv.Frame
 import org.bytedeco.javacv.OpenCVFrameGrabber
-import javax.sound.sampled.AudioFormat
-import javax.sound.sampled.AudioSystem
-import javax.sound.sampled.DataLine
-import javax.sound.sampled.DataLine.*
-import javax.sound.sampled.TargetDataLine
 
-class Init {
+class VideoInit {
 
     companion object {
-
-        const val audioChannels = 2
-
-        const val sampleRate = 48000
-
-
         fun initOpenCVFrameGrabber(): OpenCVFrameGrabber {
             val grabber = OpenCVFrameGrabber(0)
             // 设置采集器大小
@@ -45,10 +32,6 @@ class Init {
             recorder.frameRate = 30.0
             // 设置画面质量（质量越小越高），默认为23
             recorder.videoQuality = 23.0
-            // 添加音频参数
-            recorder.audioChannels = audioChannels
-            recorder.sampleRate = sampleRate // 采样率 44.1kHz
-            recorder.audioCodec = AV_CODEC_ID_AAC // 使用 AAC 编码
             recorder.start()
             return recorder
         }
