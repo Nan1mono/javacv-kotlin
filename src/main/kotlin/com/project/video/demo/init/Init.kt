@@ -63,15 +63,6 @@ class Init {
             stage.show()
         }
 
-        fun initAudioLine(): TargetDataLine {
-            val format = AudioFormat(sampleRate.toFloat(), 16, audioChannels, true, false)
-            val info = Info(TargetDataLine::class.java, format)
-            val line = AudioSystem.getLine(info) as TargetDataLine
-            line.open(format)
-            line.start()
-            return line
-        }
-
     }
 
 }

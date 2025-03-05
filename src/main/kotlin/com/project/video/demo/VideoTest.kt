@@ -33,14 +33,10 @@ class VideoTest : Application() {
     // FFmpeg视频解码器
     private lateinit var recorder: FFmpegFrameRecorder
 
-    // 新增音频线
-    private lateinit var audioLine: TargetDataLine
-
     override fun start(stage: Stage) {
         // 初始化视频采集器
         grabber = Init.initOpenCVFrameGrabber()
         recorder = Init.initFfmpegRecord(grabber)
-        audioLine = Init.initAudioLine()
         // 创建 JavaFX 窗口
         Init.initFxSwing(imageView, stage)
         // 窗口关闭时停止采集
@@ -54,7 +50,7 @@ class VideoTest : Application() {
         // 通过独立的线程，是采集和展示互不干扰，避免造成两个线程阻塞
         thread {
             while (isRunning && stage.isShowing) {
-                VideoCatch.catch(grabber, frameConverter, converter, imageView, recorder, audioLine)
+                VideoCatch.catch(grabber, frameConverter, converter, imageView, recorder)
             }
         }
     }
@@ -67,8 +63,6 @@ class VideoTest : Application() {
         recorder.stop()
         recorder.release()
         grabber.release()
-        audioLine.stop()
-        audioLine.close()
     }
 
 }

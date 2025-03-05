@@ -21,7 +21,6 @@ class VideoCatch {
             converter: Java2DFrameConverter,
             imageView: ImageView,
             recorder: FFmpegFrameRecorder,
-            audioLine: TargetDataLine
         ) {
             val startTime = System.currentTimeMillis()
             try {
@@ -44,16 +43,6 @@ class VideoCatch {
                     e.printStackTrace()
                     println("Record failed: ${e.message}")
                 }
-
-                // 音频采集
-                val buffer = ByteArray(4096)
-                val bytesRead = audioLine.read(buffer, 0, buffer.size)
-                if (bytesRead > 0) {
-                    val shortBuffer = ByteBuffer.wrap(buffer, 0, bytesRead / 2).asShortBuffer()
-                    recorder.recordSamples(Init.sampleRate, Init.audioChannels, shortBuffer) // 直接录制音频样本
-                }
-
-
                 // 释放反转帧
                 flippedFrame.close()
                 // 释放原始视频帧
