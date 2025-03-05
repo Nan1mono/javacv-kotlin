@@ -30,24 +30,24 @@ class VideoTest : Application() {
 
     override fun start(stage: Stage) {
         // 初始化视频采集器
-        grabber = VideoInit.initOpenCVFrameGrabber()
-        recorder = VideoInit.initFfmpegRecord(grabber)
+//        grabber = VideoInit.initOpenCVFrameGrabber()
+//        recorder = VideoInit.initFfmpegRecord(grabber)
         // 创建 JavaFX 窗口
         VideoInit.initFxSwing(imageView, stage)
         // 窗口关闭时停止采集
         stage.setOnCloseRequest {
             isRunning = false
             // 窗口关闭时，释放资源
-            cleanup()
+//            cleanup()
             Platform.exit()
         }
 
         // 通过独立的线程，是采集和展示互不干扰，避免造成两个线程阻塞
-        thread {
-            while (isRunning && stage.isShowing) {
-                VideoCatch.catch(grabber, frameConverter, converter, imageView, recorder)
-            }
-        }
+//        thread {
+//            while (isRunning && stage.isShowing) {
+//                VideoCatch.catch(grabber, frameConverter, converter, imageView, recorder)
+//            }
+//        }
     }
 
 
