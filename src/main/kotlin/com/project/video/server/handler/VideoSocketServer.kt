@@ -1,30 +1,20 @@
 package com.project.video.server.handler
 
-import com.project.video.client.send.core.VideoCatch
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.launch
-import org.bytedeco.javacv.OpenCVFrameGrabber
 import org.java_websocket.WebSocket
 import org.java_websocket.handshake.ClientHandshake
 import org.java_websocket.server.WebSocketServer
 import java.lang.Exception
 import java.net.InetSocketAddress
+import java.util.concurrent.CopyOnWriteArrayList
 
-class VideoSocketServer(
-    port: Int,
-    private val grabber: OpenCVFrameGrabber
-) :
-    WebSocketServer(InetSocketAddress(port)) {
+class VideoSocketServer(port: Int) : WebSocketServer(InetSocketAddress(port)) {
 
-    private val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
+    // 准备两个集合，一个是发送方socket，一个接收方socket
+    private val sendClientList = CopyOnWriteArrayList<WebSocket>()
+    private val receiveClientList = CopyOnWriteArrayList<WebSocket>()
+
     override fun onOpen(conn: WebSocket, handshake: ClientHandshake) {
         println("新客户端连接：${conn.remoteSocketAddress}")
-        scope.launch {
-            // 这里调用采集与传输逻辑
-            VideoCatch.sendVideoStream(grabber, conn)
-        }
     }
 
     override fun onClose(conn: WebSocket, code: Int, reason: String, remote: Boolean) {
@@ -41,6 +31,10 @@ class VideoSocketServer(
 
     override fun onStart() {
         println("WebSocket 服务器已启动")
+    }
+
+    fun sendToReceiveClient(){
+
     }
 
 }

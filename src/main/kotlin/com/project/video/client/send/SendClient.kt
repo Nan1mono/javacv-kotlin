@@ -30,7 +30,7 @@ class SendClient : Application() {
         // 启动摄像头采集
         grabber.start()
         // 开启socket链接
-        socketServer = VideoSocketServer(port, grabber)
+        socketServer = VideoSocketServer(port)
         socketServer.start()
         // 实时渲染当前摄像头画面
         scope.launch {
