@@ -8,7 +8,7 @@ import javafx.scene.image.ImageView
 import javafx.stage.Stage
 import java.net.URI
 
-class Client: Application() {
+class ReceiveClient: Application() {
 
     private var imageView = ImageView()
 
@@ -28,5 +28,5 @@ class Client: Application() {
 }
 
 fun main() {
-    Application.launch(Client::class.java)
+    Application.launch(ReceiveClient::class.java)
 }

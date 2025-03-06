@@ -12,7 +12,7 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 import org.bytedeco.javacv.OpenCVFrameGrabber
 
-class Server : Application() {
+class SendClient : Application() {
 
     private var imageView: ImageView = ImageView()
 
@@ -44,5 +44,5 @@ class Server : Application() {
 }
 
 fun main() {
-    Application.launch(Server::class.java)
+    Application.launch(SendClient::class.java)
 }
