@@ -50,6 +50,7 @@ class VideoSocketClient(uri: URI, private val imageView: ImageView) : WebSocketC
         val length = ByteBuffer.wrap(lengthBytes).int
         val data = ByteArray(length)
         bytes.get(data) // 读取数据
+        println("收到数据: ${data.size} 字节")
         // 将数据写入管道流
         pipedOutputStream.write(data)
         pipedOutputStream.flush()

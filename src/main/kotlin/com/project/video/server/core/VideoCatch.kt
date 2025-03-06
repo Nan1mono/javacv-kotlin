@@ -54,11 +54,13 @@ class VideoCatch {
                 withContext(Dispatchers.IO) {
                     val bytesRead = fileInputStream.read(buffer)
                     if (bytesRead > 0) {
+                        println("发送数据: $bytesRead 字节, 文件大小: ${file.length()}")
                         val lengthBytes = ByteBuffer.allocate(4).putInt(bytesRead).array()
                         webSocket.send(lengthBytes) // 发送数据长度
                         webSocket.send(buffer.copyOfRange(0, bytesRead)) // 发送实际数据
                     }
                 }
+                delay(10)
             }
 
         }
