@@ -1,0 +1,10 @@
+server:
+  port: 8333
+
+send:
+  server: localhost
+  port: 8333
+
+receive:
+  server: localhost
+  port: 8333

@@ -1,6 +1,6 @@
-package com.project.video.server.core
+package com.project.video.client.send.core
 
-import com.project.video.server.socket.VideoSocketServer
+import com.project.video.server.handler.VideoSocketServer
 import javafx.application.Platform
 import javafx.embed.swing.SwingFXUtils
 import javafx.scene.image.ImageView
@@ -8,9 +8,8 @@ import kotlinx.coroutines.*
 import org.bytedeco.javacv.*
 import org.bytedeco.opencv.global.opencv_core
 import org.java_websocket.WebSocket
-import java.io.File
-import java.io.FileInputStream
-import java.nio.ByteBuffer
+import java.io.*
+import javax.imageio.ImageIO
 
 class VideoCatch {
 
@@ -27,40 +26,24 @@ class VideoCatch {
         private val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
 
 
-
-        suspend fun sendVideoStream(grabber: OpenCVFrameGrabber, recorder: FFmpegFrameRecorder, webSocket: WebSocket) {
-            val file = File("temp_video.h264")
-            val fileInputStream = withContext(Dispatchers.IO) {
-                FileInputStream(file)
-            }
-            // 1MB 缓冲区，每次发送1MB数据
-            val buffer = ByteArray(1024 * 1024)
+        suspend fun sendVideoStream(grabber: OpenCVFrameGrabber, webSocket: WebSocket) {
             isRunning = true
-            // 使用协程进行画面录制文件
-            scope.launch {
-                // 运行状态标记为true，并且socketSession为开时，开始传输画面
-                while (isRunning) {
-                    // 开始抓取帧（原始帧）
-                    val originFrame = grabber.grab()
-                    recorder.record(originFrame)
-                    // 关闭原始帧和反转真
-                    originFrame.close()
-                    delay(33)
-                }
-            }
             // 这里进行文件解码与发送
             while (isRunning && webSocket.isOpen) {
-                // 读取文件流
+                // 开始抓取帧（原始帧）
+                val originFrame = grabber.grab()
+                val bufferedImage = converter.convert(originFrame)
+                val byteArrayOutputStream = ByteArrayOutputStream()
                 withContext(Dispatchers.IO) {
-                    val bytesRead = fileInputStream.read(buffer)
-                    if (bytesRead > 0) {
-                        println("发送数据: $bytesRead 字节, 文件大小: ${file.length()}")
-                        val lengthBytes = ByteBuffer.allocate(4).putInt(bytesRead).array()
-                        webSocket.send(lengthBytes) // 发送数据长度
-                        webSocket.send(buffer.copyOfRange(0, bytesRead)) // 发送实际数据
+                    ImageIO.write(bufferedImage, "jpg", byteArrayOutputStream) // 转换为 JPEG
+                    val imageData = byteArrayOutputStream.toByteArray()
+                    if (webSocket.isOpen){
+                        webSocket.send(imageData)
                     }
+                    // 关闭原始帧
+                    originFrame.close()
                 }
-                delay(10)
+                delay(33)
             }
 
         }
@@ -92,16 +75,13 @@ class VideoCatch {
             }
         }
 
-        fun stop(grabber: OpenCVFrameGrabber, recorder: FFmpegFrameRecorder, socketServer: VideoSocketServer) {
+        fun stop(grabber: OpenCVFrameGrabber, socketServer: VideoSocketServer) {
             isRunning = false
-            recorder.stop()
             grabber.stop()
             grabber.release()
             Platform.exit()
             // 断开socket服务
             socketServer.stop()
-            // 清理临时文件
-            File("temp_video.h264").delete()
         }
     }
 

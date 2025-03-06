@@ -1,8 +1,9 @@
-package com.project.video.client
+package com.project.video.client.receive
 
-import com.project.video.client.socket.VideoSocketClient
-import com.project.video.init.VideoInitializer
+import com.project.video.client.receive.socket.VideoSocketClient
+import com.project.video.client.config.VideoInitializer
 import javafx.application.Application
+import javafx.application.Platform
 import javafx.scene.image.ImageView
 import javafx.stage.Stage
 import java.net.URI
@@ -17,6 +18,11 @@ class Client: Application() {
         VideoInitializer.initDisplay(imageView, stage)
         stage.show()
         client.connect()
+    }
+
+    override fun stop() {
+        client.close()
+        Platform.exit()
     }
 
 }

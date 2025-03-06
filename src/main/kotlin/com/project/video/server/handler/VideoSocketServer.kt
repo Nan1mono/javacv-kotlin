@@ -1,12 +1,10 @@
-package com.project.video.server.socket
+package com.project.video.server.handler
 
-import com.project.video.server.core.VideoCatch
-import javafx.scene.image.ImageView
+import com.project.video.client.send.core.VideoCatch
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
-import org.bytedeco.javacv.FFmpegFrameRecorder
 import org.bytedeco.javacv.OpenCVFrameGrabber
 import org.java_websocket.WebSocket
 import org.java_websocket.handshake.ClientHandshake
@@ -16,7 +14,6 @@ import java.net.InetSocketAddress
 
 class VideoSocketServer(
     port: Int,
-    private val recorder: FFmpegFrameRecorder,
     private val grabber: OpenCVFrameGrabber
 ) :
     WebSocketServer(InetSocketAddress(port)) {
@@ -26,7 +23,7 @@ class VideoSocketServer(
         println("新客户端连接：${conn.remoteSocketAddress}")
         scope.launch {
             // 这里调用采集与传输逻辑
-            VideoCatch.sendVideoStream(grabber, recorder, conn)
+            VideoCatch.sendVideoStream(grabber, conn)
         }
     }
 
@@ -46,7 +43,4 @@ class VideoSocketServer(
         println("WebSocket 服务器已启动")
     }
 
-    fun sendStream(coon: WebSocket) {
-
-    }
 }
