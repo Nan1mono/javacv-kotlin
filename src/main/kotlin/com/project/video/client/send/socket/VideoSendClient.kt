@@ -18,6 +18,7 @@ class VideoSendClient(uri: URI, header: HashMap<String, String>, private val gra
 
     override fun onOpen(handshake: ServerHandshake) {
         println("客户端链接成功，开始发送视频画面....")
+        send("request")
         scope.launch {
             VideoCatch.sendVideoStream(grabber, this@VideoSendClient)
         }

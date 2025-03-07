@@ -31,7 +31,11 @@ class VideoSocketServer(port: Int) : WebSocketServer(InetSocketAddress(port)) {
         CONN_LIST.removeIf { it.socket == conn }
     }
 
-    override fun onMessage(conn: WebSocket, message: String) {}
+    override fun onMessage(conn: WebSocket, message: String) {
+        if (message == "request") {
+            conn.send("connect successful!")
+        }
+    }
 
     override fun onMessage(conn: WebSocket, message: ByteBuffer) {
         // 判断消息是否来自发送方
