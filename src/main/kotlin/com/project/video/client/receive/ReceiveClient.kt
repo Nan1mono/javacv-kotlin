@@ -13,15 +13,18 @@ class ReceiveClient : Application() {
 
     private var imageView = ImageView()
 
+    private val sendConfig = ReadYamlUtils.readConfigProperty("receive") as Map<*, *>
+
+    private val socketUrl = sendConfig["uri"].toString()
+
     // 初始化连接头，用以表示信息
     private val header = HashMap<String, String>().also {
-        val readConfigProperty = ReadYamlUtils.readConfigProperty("receive") as Map<*, *>
-        it["name"] =  readConfigProperty["name"].toString()
+        it["name"] =  sendConfig["name"].toString()
         it["type"] = "receive"
-        it["direction"] = readConfigProperty["direction"].toString()
+        it["direction"] = sendConfig["direction"].toString()
     }
 
-    private var client = VideoReceiveClient(URI("ws://localhost:8333"), header, imageView)
+    private var client = VideoReceiveClient(URI("ws://$socketUrl"), header, imageView)
 
     override fun start(stage: Stage) {
         VideoInitializer.initDisplay(imageView, stage)
