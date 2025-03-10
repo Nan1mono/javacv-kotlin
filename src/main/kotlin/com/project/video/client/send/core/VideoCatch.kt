@@ -1,12 +1,10 @@
 package com.project.video.client.send.core
 
-import com.project.video.server.handler.VideoSocketServer
 import javafx.application.Platform
 import javafx.embed.swing.SwingFXUtils
 import javafx.scene.image.ImageView
 import kotlinx.coroutines.*
 import org.bytedeco.javacv.*
-import org.bytedeco.opencv.global.opencv_core
 import org.java_websocket.WebSocket
 import java.io.*
 import javax.imageio.ImageIO
@@ -17,14 +15,8 @@ class VideoCatch {
         // 帧转换器
         private val converter = Java2DFrameConverter()
 
-        // 帧与画面转换器，用于调整渲染出的画面
-        private val frameConverter = OpenCVFrameConverter.ToMat()
-
         // 运行状态标记
         private var isRunning = false
-
-        private val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
-
 
         suspend fun sendVideoStream(grabber: OpenCVFrameGrabber, webSocket: WebSocket) {
             isRunning = true
@@ -48,7 +40,6 @@ class VideoCatch {
 
         }
 
-
         suspend fun displayVideo(grabber: OpenCVFrameGrabber, imageView: ImageView) = withContext(Dispatchers.Default) {
             isRunning = true
             while (isRunning) {
@@ -64,26 +55,6 @@ class VideoCatch {
                 originFrame.close()
             }
         }
-
-        private fun turnFrame(frame: Frame): Frame {
-            // 转换为mat用于反转画面
-            val mat = frameConverter.convert(frame)
-            // 反转帧
-            return frameConverter.convert(mat).also {
-                // 翻转画面
-                opencv_core.flip(mat, mat, 1)
-            }
-        }
-
-        fun stop(grabber: OpenCVFrameGrabber, socketServer: VideoSocketServer) {
-            isRunning = false
-            grabber.stop()
-            grabber.release()
-            Platform.exit()
-            // 断开socket服务
-            socketServer.stop()
-        }
     }
-
 
 }

@@ -1,10 +1,15 @@
+# 服务端配置
 server:
   port: 8333
 
+# 发送端配置
 send:
-  server: localhost
-  port: 8333
+  uri: localhost:8333
+  name: sendClient
+  direction: receiveClient
 
+# 接收端配置
 receive:
-  server: localhost
-  port: 8333
+  uri: localhost:8333
+  name: receiveClient
+  direction: sendClient

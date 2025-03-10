@@ -10,20 +10,21 @@ import java.net.URI
 import java.nio.ByteBuffer
 
 
-class VideoSocketClient(uri: URI, private val imageView: ImageView) : WebSocketClient(uri) {
-
-
+class VideoReceiveClient(uri: URI, header: HashMap<String, String>, private val imageView: ImageView) :
+    WebSocketClient(uri, header) {
 
     override fun onOpen(handshake: ServerHandshake) {
         println("客户端链接成功，开始渲染视频画面....")
     }
 
-    override fun onMessage(message: String) {}
+    override fun onMessage(message: String) {
+        println("客户端接收到消息：$message")
+    }
 
     // 处理流
     override fun onMessage(bytes: ByteBuffer) {
         val inputStream = ByteArrayInputStream(bytes.array())
-        Platform.runLater{
+        Platform.runLater {
             imageView.image = Image(inputStream)
         }
     }
