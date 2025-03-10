@@ -1,6 +1,5 @@
 package com.project.video.client.send.socket
 
-import com.project.video.client.config.VideoInitializer
 import com.project.video.client.send.core.VideoCatch
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -27,12 +26,7 @@ class VideoSendClient(uri: URI, header: HashMap<String, String>, private val gra
     override fun onMessage(message: String) {}
 
     // 处理流
-    override fun onMessage(bytes: ByteBuffer) {
-//        val inputStream = ByteArrayInputStream(bytes.array())
-//        Platform.runLater {
-//            imageView.image = Image(inputStream)
-//        }
-    }
+    override fun onMessage(bytes: ByteBuffer) {}
 
     override fun onClose(code: Int, reason: String, remote: Boolean) {
         println("客户端链接关闭")
