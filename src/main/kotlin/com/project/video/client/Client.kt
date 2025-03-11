@@ -34,14 +34,13 @@ class Client : Application() {
 
     private lateinit var sendClient: VideoSendClient
 
-    private val sendConfig = ReadYamlUtils.readConfigProperty("send") as Map<*, *>
+    private val sendConfig = ReadYamlUtils.readConfigProperty("client") as Map<*, *>
 
     private val socketUrl = sendConfig["uri"].toString()
 
     // 初始化连接头，用以表示信息
     private val header = HashMap<String, String>().also {
         it["name"] =  sendConfig["name"].toString()
-        it["type"] = "send"
         it["direction"] = sendConfig["direction"].toString()
     }
 

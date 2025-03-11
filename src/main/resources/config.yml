@@ -3,13 +3,7 @@ server:
   port: 8333
 
 # 发送端配置
-send:
+client:
   uri: localhost:8333
-  name: sendClient
-  direction: sendClient
-
-# 接收端配置
-receive:
-  uri: localhost:8333
-  name: receiveClient
-  direction: sendClient
+  name: clientA
+  direction: clientA
