@@ -1,11 +1,12 @@
-package com.project.video.client.send
+package com.project.video.client
 
-import com.project.video.client.send.core.VideoCatch
+import com.project.video.client.core.VideoCatch
 import com.project.video.client.config.VideoInitializer
-import com.project.video.client.send.socket.VideoSendClient
+import com.project.video.client.socket.VideoSendClient
 import com.project.video.toolkit.ReadYamlUtils
 import javafx.application.Application
 import javafx.scene.image.ImageView
+import javafx.scene.layout.HBox
 import javafx.stage.Stage
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -14,9 +15,18 @@ import kotlinx.coroutines.launch
 import org.bytedeco.javacv.OpenCVFrameGrabber
 import java.net.URI
 
-class SendClient : Application() {
+class Client : Application() {
 
-    private var imageView: ImageView = ImageView()
+    private val sendImageView = ImageView().apply {
+        fitWidth = 640.0
+        fitHeight = 480.0
+        isPreserveRatio = true
+    }
+    private val receiveImageView = ImageView().apply {
+        fitWidth = 640.0
+        fitHeight = 480.0
+        isPreserveRatio = true
+    }
 
     private val scope = CoroutineScope(Dispatchers.Default + SupervisorJob())
 
@@ -36,20 +46,21 @@ class SendClient : Application() {
     }
 
     override fun start(stage: Stage) {
-        VideoInitializer.initDisplay(imageView, stage)
+        val hBox = HBox(10.0,sendImageView, receiveImageView)
+        VideoInitializer.initDisplay(hBox, stage)
         stage.show()
         // 启动摄像头采集
         grabber.start()
         // 开启socket链接
-        sendClient = VideoSendClient(URI("ws://$socketUrl"), header, grabber)
+        sendClient = VideoSendClient(URI("ws://$socketUrl"), header, grabber, receiveImageView)
         sendClient.connect()
         // 实时渲染当前摄像头画面
         scope.launch {
-            VideoCatch.displayVideo(grabber, imageView)
+            VideoCatch.displayVideo(grabber, sendImageView)
         }
     }
 }
 
 fun main() {
-    Application.launch(SendClient::class.java)
+    Application.launch(Client::class.java)
 }

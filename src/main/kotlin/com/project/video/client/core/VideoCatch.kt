@@ -1,4 +1,4 @@
-package com.project.video.client.send.core
+package com.project.video.client.core
 
 import javafx.application.Platform
 import javafx.embed.swing.SwingFXUtils

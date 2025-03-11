@@ -6,7 +6,7 @@ server:
 send:
   uri: localhost:8333
   name: sendClient
-  direction: receiveClient
+  direction: sendClient
 
 # 接收端配置
 receive:
