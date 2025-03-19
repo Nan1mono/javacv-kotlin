@@ -65,12 +65,6 @@ tasks.withType<Javadoc>() {
     options.encoding = "UTF-8"
 }
 
-kotlin {
-    compilerOptions {
-        jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_21)
-    }
-}
-
 java {
     toolchain {
         languageVersion.set(JavaLanguageVersion.of(21))
