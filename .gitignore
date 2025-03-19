@@ -43,6 +43,9 @@ build/
 *.h264
 *.log
 dependency-reduced-pom.xml
+result/
+pdf/
+.kotlin/
 
 
 ### Gradle ###

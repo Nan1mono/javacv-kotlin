@@ -6,6 +6,7 @@ plugins {
     `java-library`
     `maven-publish`
     kotlin("jvm") version "2.1.10"
+    id("org.openjfx.javafxplugin") version "0.0.13"
 }
 
 repositories {
@@ -17,19 +18,30 @@ repositories {
     maven {
         url = uri("https://repo.maven.apache.org/maven2/")
     }
+
+    maven {
+        url = uri("https://repo.e-iceblue.cn/repository/maven-public/")
+        name = "e-iceblue"
+    }
 }
 
 dependencies {
-    api(libs.org.springframework.boot.spring.boot.starter)
-    api(libs.org.java.websocket.java.websocket)
-    api(libs.org.bytedeco.javacv)
-    api(libs.org.bytedeco.javacv.platform)
-    api(libs.org.yaml.snakeyaml)
-    api(libs.com.alibaba.fastjson2.fastjson2)
-    api(libs.org.jetbrains.kotlin.kotlin.stdlib)
-    api(libs.org.jetbrains.kotlinx.kotlinx.coroutines.core)
-    api(libs.org.openjfx.javafx.controls)
-    api(libs.org.openjfx.javafx.swing)
+    implementation(libs.org.springframework.boot.spring.boot.starter)
+    implementation(libs.org.java.websocket.java.websocket)
+    implementation(libs.org.bytedeco.javacv)
+    implementation(libs.org.bytedeco.javacv.platform)
+    implementation(libs.org.yaml.snakeyaml)
+    implementation(libs.com.alibaba.fastjson2.fastjson2)
+    implementation(libs.org.jetbrains.kotlin.kotlin.stdlib)
+    implementation(libs.org.jetbrains.kotlinx.kotlinx.coroutines.core)
+    implementation(libs.org.openjfx.javafx.controls)
+    implementation(libs.org.openjfx.javafx.swing)
+    implementation("cn.hutool:hutool-all:5.8.26")
+    implementation("org.apache.pdfbox:fontbox:2.0.27")
+    implementation("org.apache.pdfbox:pdfbox:2.0.27")
+    implementation("e-iceblue:spire.pdf.free:5.1.0")
+    implementation("com.github.jai-imageio:jai-imageio-core:1.4.0")
+    implementation("com.github.jai-imageio:jai-imageio-jpeg2000:1.4.0")
     testImplementation(libs.org.jetbrains.kotlin.kotlin.test.junit5)
     testImplementation(libs.org.junit.jupiter.junit.jupiter)
 }
@@ -52,3 +64,29 @@ tasks.withType<JavaCompile>() {
 tasks.withType<Javadoc>() {
     options.encoding = "UTF-8"
 }
+
+kotlin {
+    compilerOptions {
+        jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_21)
+    }
+}
+
+java {
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(21))
+    }
+}
+
+javafx {
+    version = "21"  // 使用与你的 Java 版本兼容的 JavaFX 版本
+    modules = listOf(
+        "javafx.controls", // 基本控件
+        "javafx.fxml",     // FXML 支持
+        "javafx.graphics", // 图形支持
+        "javafx.base",     // 基础类库
+        "javafx.media",    // 媒体支持（如果需要）
+        "javafx.web",       // WebView（如果需要）
+        "javafx.swing"
+    )
+}
+
