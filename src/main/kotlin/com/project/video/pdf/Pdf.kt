@@ -43,16 +43,8 @@ class Pdf {
 
         private fun convertPdfToImg(doc: PDDocument, count: Int) {
             val renderer = PDFRenderer(doc)
-//            val imageList = ArrayList<BufferedImage>()
-//            var maxWidth = 0
-//            var height = 0
             for (i in 0..<doc.numberOfPages) {
                 val bufferedImage = renderer.renderImageWithDPI(i, 160F, ImageType.RGB)
-//                if (bufferedImage.width > maxWidth) {
-//                    maxWidth = bufferedImage.width
-//                }
-//                height += bufferedImage.height
-//                imageList.add(bufferedImage)
                 ImageIO.write(
                     bufferedImage,
                     "jpg",
@@ -60,28 +52,6 @@ class Pdf {
                 )
             }
             doc.close()
-            // 合成图片
-//            mergeImg(imageList, maxWidth, height, count)
-        }
-
-        private fun mergeImg(imgList: List<BufferedImage>, maxWidth: Int, height: Int, count: Int) {
-            val filePath = "D:\\Code\\KotlinProject\\javacv-kotlin\\result\\ToPNG-$count.png"
-            val exists = FileUtil.file(filePath).exists()
-            if (exists) {
-                FileUtil.del(filePath)
-            }
-            val file = FileUtil.touch(filePath)
-            val finalImage = BufferedImage(maxWidth, height, BufferedImage.TYPE_INT_RGB)
-            val graphics = finalImage.createGraphics()
-            var wx = 0
-            var hy = 0
-            for (img in imgList) {
-                graphics.drawImage(img, 0, hy, null)
-                wx += img.width
-                hy += img.height
-            }
-            FileUtil.file()
-            ImageIO.write(finalImage, "png", file)
         }
     }
 
