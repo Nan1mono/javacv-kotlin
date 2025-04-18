@@ -8,6 +8,7 @@ import org.bytedeco.javacv.*
 import org.java_websocket.WebSocket
 import java.io.*
 import javax.imageio.ImageIO
+import kotlin.coroutines.CoroutineContext
 
 class VideoCatch {
 
@@ -18,7 +19,7 @@ class VideoCatch {
         // 运行状态标记
         private var isRunning = false
 
-        suspend fun sendVideoStream(grabber: OpenCVFrameGrabber, webSocket: WebSocket) {
+        suspend fun sendVideoStream(grabber: OpenCVFrameGrabber, webSocket: WebSocket, context: CoroutineContext) {
             isRunning = true
             // 这里进行文件解码与发送
             while (isRunning && webSocket.isOpen) {
@@ -26,10 +27,10 @@ class VideoCatch {
                 val originFrame = grabber.grab()
                 val bufferedImage = converter.convert(originFrame)
                 val byteArrayOutputStream = ByteArrayOutputStream()
-                withContext(Dispatchers.IO) {
+                withContext(context) {
                     ImageIO.write(bufferedImage, "jpg", byteArrayOutputStream) // 转换为 JPEG
                     val imageData = byteArrayOutputStream.toByteArray()
-                    if (webSocket.isOpen){
+                    if (webSocket.isOpen) {
                         webSocket.send(imageData)
                     }
                     // 关闭原始帧

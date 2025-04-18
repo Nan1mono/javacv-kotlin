@@ -28,7 +28,7 @@ class VideoSendClient(
         println("客户端链接成功，开始发送视频画面....")
         send("request")
         scope.launch {
-            VideoCatch.sendVideoStream(grabber, this@VideoSendClient)
+            VideoCatch.sendVideoStream(grabber, this@VideoSendClient, scope.coroutineContext)
         }
     }
 
